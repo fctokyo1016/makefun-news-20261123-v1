@@ -38,12 +38,16 @@ source and a certainty level: CONFIRMED means two or more wires
 carried it, REPORTED means the day's wires carried it, CLAIM
 means it is one side's account.
 
+This is the v2 final version, rebuilt after Monday (UTC) closed.
 The three leads: COP31 in Antalya ending with no cover decision
-after a record 49 hours of overtime; Belgium's national strike
-shutting air traffic control from 07:00 to 21:00, with 429
-flights and about 59,500 passengers due at Brussels Airport;
-and Liverpool beating Manchester United 4-0 at Anfield in
-Mauricio Pochettino's first match in charge. Reporting was
-checked against the wires and major outlets of the day
-(among them Reuters, AP, AFP, Al Jazeera, RTBF, Xinhua, SCMP,
-The Times, El País, GMA, Haaretz, KCNA and ATP).
+after a record 49 hours of overtime, with Monday's reactions —
+Guterres's "deep dismay", Stiell's "fell short", Gore calling
+the fossil-fuel veto "outrageous"; Belgium's national strike,
+with 404 of 429 Brussels Airport flights cancelled and 50,000
+people marching in Brussels; and Nvidia reinstating Jensen
+Huang as CEO after President Trump's intervention, the shares
+jumping 31% and adding about $950bn in a day as the Nasdaq
+gained 6.5%. Reporting was checked against the wires and major
+outlets of the day (among them Reuters, AP, AFP, CNN, Al
+Jazeera, RTBF, Belga, Xinhua, SCMP, The Times, El País, GMA,
+Haaretz, KCNA, ATP, Investopedia and USA Today).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Entry point for the make.fun bounty news-image-20261123.
+"""Entry point for the make.fun bounty news-image-20261123 (v2 final).
 
 Copies the bundled front page (entry.png, 1024x1024 PNG, under 1 MiB)
 to /output/entry.png. No network access, no randomness: every run

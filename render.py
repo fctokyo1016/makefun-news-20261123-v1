@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-"""Draw the front page for Monday 23 November 2026.
+"""Draw the front page for Monday 23 November 2026 — v2 final.
 
 One broadsheet, 1024x1024: masthead, six big numbers, a region bar,
 a UTC timeline, three illustrated lead stories, twelve small cards,
 a dotted world map with numbered pins, a list of 26 further briefs,
-a date-check box and a footer. Every story is dated 23 Nov 2026
-and carries its source and a certainty tag. The drawing is fully
-deterministic: the same run always produces the same PNG bytes.
+a date-check box and a footer. v2 rebuilds the page after Monday
+(UTC) closed: the Belgium strike and the Brussels march are reported
+with their confirmed results, the COP31 panel carries Monday's
+reactions to Sunday's collapse, the ATP final has its confirmed
+winner, and the third lead is Monday's own biggest story — Nvidia
+reinstating Jensen Huang and the market surge that followed.
+Every story is dated 23 Nov 2026 and carries its source and a
+certainty tag. The drawing is fully deterministic: the same run
+always produces the same PNG bytes.
 """
 from PIL import Image, ImageDraw, ImageFont
 
@@ -21,6 +27,7 @@ PALETTE = {
     "gold": (196, 138, 32),
     "night": (18, 28, 54),
     "soft": (50, 50, 50),
+    "green": (34, 110, 62),
 }
 SERIF_B = ["/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf",
            "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"]
@@ -116,7 +123,7 @@ page.write(CANVAS[0] - MX - page.width(right, "sans_b", 11), 7,
            right, "sans_b", 11, (255, 255, 255))
 
 page.centred(34, "Monday 23 November 2026", "serif_b", 57, PALETTE["ink"])
-page.centred(102, "COP31 collapses in Antalya · Belgium's skies shut for a day · Liverpool rout United 4-0",
+page.centred(102, "COP31 collapses in Antalya · Belgium's skies shut for a day · Nvidia soars 31% as Huang returns",
              "serif", 16, PALETTE["red"])
 page.hline(128, 2)
 page.hline(132, 1)
@@ -124,9 +131,9 @@ page.hline(132, 1)
 # ---------- six big numbers ----------
 figures = [("49 hrs", "overtime at COP31 — a record"),
            ("0", "cover decisions adopted at Antalya"),
-           ("429", "flights due at Brussels Airport"),
-           ("59,500", "passengers facing strike disruption"),
-           ("4–0", "Liverpool v Manchester United"),
+           ("404", "flights cancelled at Brussels Airport"),
+           ("50,000", "marchers in Brussels (police count)"),
+           ("+31%", "Nvidia on Huang's return"),
            ("98.79%", "Hong Kong's record EC turnout")]
 cell = IW / 6
 for pos, (big, small) in enumerate(figures):
@@ -141,13 +148,13 @@ for pos, (big, small) in enumerate(figures):
 page.hline(196, 1)
 
 # ---------- region bar ----------
-regions = [("EUROPE 13", 0.24, (38, 84, 124)),
+regions = [("EUROPE 12", 0.22, (38, 84, 124)),
            ("MIDDLE EAST 5", 0.12, (168, 30, 30)),
            ("ASIA-PACIFIC 15", 0.26, (24, 92, 84)),
-           ("AMERICAS 5", 0.12, (196, 138, 32)),
+           ("AMERICAS 6", 0.13, (196, 138, 32)),
            ("AFRICA 1", 0.09, (110, 66, 140)),
            ("OCEANIA 1", 0.09, (70, 130, 60)),
-           ("WORLD 1", 0.08, (90, 90, 90))]
+           ("WORLD 1", 0.09, (90, 90, 90))]
 cursor = MX
 for label, share, hue in regions:
     seg = IW * share
@@ -158,9 +165,9 @@ for label, share, hue in regions:
 
 # ---------- the day in UTC ----------
 pen.rectangle([MX, 230, CANVAS[0] - MX, 252], fill=PALETTE["navy"])
-slots = [("THE DAY IN UTC", None), ("06:00", "Belgium ATC suspended"),
-         ("09:00", "Brussels march gathers >"), ("10:00", "march to Midi >"),
-         ("14:00", "COP31 fallout >"), ("20:00", "ATC resumes >")]
+slots = [("THE DAY IN UTC", None), ("06:00", "ATC off in Belgium"),
+         ("09:00", "Brussels march gathers"), ("12:15", "van torched at Midi"),
+         ("14:30", "Nvidia brings Huang back"), ("21:00", "Nasdaq closes +6.5%")]
 cursor = MX + 8
 for moment, what in slots:
     if what is None:
@@ -208,7 +215,7 @@ def draw_cop(x, y, w, h):
     pen.ellipse([x + w - 58, y + 10, x + w - 26, y + 42], outline=PALETTE["ink"], width=2)
     pen.line([x + w - 42, y + 26, x + w - 42, y + 16], fill=PALETTE["ink"], width=2)
     pen.line([x + w - 42, y + 26, x + w - 32, y + 30], fill=PALETTE["ink"], width=2)
-    page.red_tag(x, y, w, "NO COVER DECISION", "LONGEST COP EVER")
+    page.red_tag(x, y, w, "NO COVER DECISION", "FIRST NO-DEAL COP SINCE 2009")
 
 
 def draw_brussels(x, y, w, h):
@@ -237,53 +244,58 @@ def draw_brussels(x, y, w, h):
     cx, cy = x + w - 40, y + 60
     pen.ellipse([cx - 22, cy - 22, cx + 22, cy + 22], outline=PALETTE["red"], width=5)
     pen.line([cx - 16, cy + 16, cx + 16, cy - 16], fill=PALETTE["red"], width=5)
-    page.red_tag(x, y, w, "ATC OFF 07:00-21:00", "429 FLIGHTS HELD")
+    page.red_tag(x, y, w, "404 FLIGHTS CANCELLED", "50,000 MARCH IN BRUSSELS")
 
 
-def draw_anfield(x, y, w, h):
+def draw_nvidia(x, y, w, h):
     pen.rectangle([x, y, x + w, y + h], fill=PALETTE["night"])
-    for fx in (26, 128, 230):
-        pen.rectangle([x + fx, y + 6, x + fx + 34, y + 12], fill=(240, 240, 200))
-        pen.line([x + fx + 17, y + 12, x + fx + 17, y + 26], fill=(200, 200, 180), width=2)
-    # the Kop: red wall of supporters
-    pen.rectangle([x + 14, y + 30, x + w - 14, y + 62], fill=(168, 30, 30))
-    for row in range(2):
-        for col in range(14):
-            shade = (255, 255, 255) if (row + col) % 3 else (240, 200, 120)
-            pen.ellipse([x + 22 + col * 19, y + 36 + row * 11,
-                         x + 26 + col * 19, y + 40 + row * 11], fill=shade)
-    # pitch and centre line
-    pen.rectangle([x, y + h - 26, x + w, y + h], fill=(34, 110, 60))
-    pen.line([x, y + h - 14, x + w, y + h - 14], fill=(255, 255, 255), width=1)
-    pen.ellipse([x + w / 2 - 12, y + h - 26, x + w / 2 + 12, y + h - 2],
-                outline=(255, 255, 255), width=1)
-    # scoreboard
-    pen.rectangle([x + 96, y + 66, x + 216, y + 92], fill=(10, 14, 26),
-                  outline=(255, 255, 255))
-    page.write(x + 106, y + 71, "LIV 4-0 MUN", "sans_b", 16, (255, 210, 60))
-    page.red_tag(x, y, w, "4-0 AT ANFIELD", "YORO SENT OFF")
+    # grid lines
+    for gy in range(4):
+        yy = y + 22 + gy * 18
+        pen.line([x + 10, yy, x + w - 10, yy], fill=(40, 56, 92), width=1)
+    # the day's gain, top left, clear of the chart
+    page.write(x + 14, y + 20, "+31%", "sans_b", 24, (46, 220, 110))
+    # rising candlesticks on the right
+    base = y + h - 18
+    candles = [(110, 20, 30), (150, 26, 40), (190, 22, 36), (230, 34, 50),
+               (268, 40, 58)]
+    for off, lo, hi in candles:
+        pen.line([x + off + 7, base - hi - 8, x + off + 7, base - lo + 4],
+                 fill=(120, 200, 120), width=2)
+        pen.rectangle([x + off, base - hi, x + off + 14, base - lo],
+                      fill=(46, 180, 90))
+    # the surge arrow over the candles
+    pen.line([x + 118, base - 26, x + 180, base - 40, x + 240, base - 50,
+              x + w - 24, base - 56], fill=(250, 210, 60), width=3)
+    pen.polygon([(x + w - 24, base - 56), (x + w - 40, base - 52),
+                 (x + w - 28, base - 38)], fill=(250, 210, 60))
+    page.write(x + 14, y + h - 16, "NASDAQ +6.5% · S&P +4.7% · DOW +3.0%",
+               "sans_b", 9, (255, 255, 255))
+    page.red_tag(x, y, w, "NVDA +31%", "+$950BN IN A DAY")
 
 
 leads = [
     (draw_cop, "1  ANTALYA, TÜRKIYE · CLIMATE", "CONFIRMED",
-     "COP31 ends with no deal: the Antalya pact collapses",
-     "After 49 hours of overtime, President Kurum gavels the longest COP ever "
-     "to a close with no cover decision adopted. The EU refused a text that "
-     "never mentions fossil fuels; Bowen concedes “unbridgeable red lines”; "
-     "Guterres voices “deep dismay”.",
-     "Reuters · AP · AFP"),
+     "COP31 ends with no deal — and the world reacts",
+     "Sunday's plenary adopts no cover decision after 49 hours of "
+     "overtime — the longest COP ever, first with no deal since "
+     "Copenhagen 2009. Monday: Guterres voices “deep dismay”, Stiell "
+     "says it “fell short”, Gore calls the veto “outrageous”.",
+     "Reuters · AP · AFP · CNN"),
     (draw_brussels, "2  BRUSSELS, BELGIUM · STRIKE", "CONFIRMED",
-     "Belgium's skies shut for a day as controllers strike",
-     "Skeyes suspends ATC 07:00–21:00 local in the national strike against "
-     "the De Wever government's austerity. Brussels Airport had 429 flights "
-     "and ~59,500 passengers due; Charleroi halts completely.",
-     "RTBF · AFP · Xinhua"),
-    (draw_anfield, "3  ANFIELD, LIVERPOOL · FOOTBALL", "CONFIRMED",
-     "Liverpool rout United 4-0 in Pochettino's nightmare debut",
-     "Yoro is sent off after eight minutes; Szoboszlai curls home the "
-     "free-kick, then Wirtz, Ngumoha and Muñoz score. Pochettino's first "
-     "match in charge of Manchester United ends in a rout.",
-     "The Times · AP"),
+     "Belgium's skies shut for a day as 50,000 march",
+     "Skeyes suspends ATC 07:00–21:00; 404 of 429 Brussels Airport flights "
+     "are cancelled, hitting 50,000+ passengers, and Charleroi halts all "
+     "day. Police count 50,000 on the march to Midi (unions say 70,000); "
+     "De Wever warns his government could fall.",
+     "RTBF · AFP · Belga"),
+    (draw_nvidia, "3  NEW YORK, USA · MARKETS", "CONFIRMED",
+     "Huang is back: Nvidia soars 31% as Trump brokers return",
+     "Eleven days after Huang quit amid scandal, the board reinstates him "
+     "as CEO; Trump says “I made the deal”. Nvidia jumps 31% — its best "
+     "day since 2003, adding about $950bn — as the Nasdaq gains 6.5% and "
+     "the S&P 4.7%.",
+     "Reuters · Investopedia · USA Today"),
 ]
 panel_w = (IW - 24) / 3
 for pos, (scene, kicker, cert, head, body, src) in enumerate(leads):
@@ -352,7 +364,7 @@ def pictogram(kind, x, y, w, h, bg):
 cards = [
     {"icon": "ballot", "hue": (38, 84, 124), "no": "4", "place": "HONG KONG · ELECTION",
      "head": "Hong Kong names its Election Committee",
-     "body": "Turnout 98.79% as 723 seats are filled; ex-minister Chan and Law Society chief Tong lose.",
+     "body": "Turnout 98.79% as 723 seats are filled; ex-minister Chan loses by two votes; Rimsky Yuen and Sophia Chan win seats.",
      "src": "SCMP", "cert": "CONFIRMED"},
     {"icon": "book", "hue": (24, 92, 84), "no": "5", "place": "SEOUL · EDUCATION",
      "head": "Seoul's education minister quits over AI row",
@@ -391,9 +403,9 @@ cards = [
      "body": "Delhi and Kathmandu discuss power links as pollution curbs bite in the capital.",
      "src": "Wires", "cert": "REPORTED"},
     {"icon": "tennis", "hue": (110, 66, 140), "no": "14", "place": "TURIN · TENNIS",
-     "head": "Turin: Alcaraz storms the ATP Finals decider",
-     "body": "Broke Zverev three times and took the first set 6-2; the final is Sunday night.",
-     "src": "El País", "cert": "REPORTED"},
+     "head": "Alcaraz wins his first ATP Finals crown",
+     "body": "Beats Zverev 6-2, 7-6(7) in Turin, saving three set points in the tie-break; a year after losing the final to Sinner.",
+     "src": "ATP", "cert": "CONFIRMED"},
     {"icon": "bus", "hue": (38, 84, 124), "no": "15", "place": "MANILA · STRIKE",
      "head": "Manila: transport strike begins, runs to Tuesday",
      "body": "Manibela's strike halts jeepneys and buses across the capital.",
@@ -450,7 +462,7 @@ while gx < MAP_X + MAP_W:
         gy += step
     gx += step
 
-pins = [(1, 30.7, 36.9), (2, 4.4, 50.9), (3, -3.0, 53.4), (4, 114.2, 22.3),
+pins = [(1, 30.7, 36.9), (2, 4.4, 50.9), (3, -74.0, 40.7), (4, 114.2, 22.3),
         (5, 127.0, 37.5), (6, 116.4, 39.9), (7, 106.8, -6.2), (8, 30.5, 50.4),
         (9, 50.6, 26.2), (10, 25.0, 60.0), (11, -9.1, 38.7), (12, 90.4, 23.8),
         (13, 77.2, 28.6), (14, 7.7, 45.1), (15, 121.0, 14.6)]
@@ -480,7 +492,7 @@ further = [
     "30 Europe: EU-UK trade talks resume (Wires)",
     "31 Europe: Living-cost protests spread in France (Wires)",
     "32 Europe: PIK: 'Collapse beats a half-hearted deal' (PIK)",
-    "33 Europe: Hull stun Brighton 2-0, McBurnie double (Times)",
+    "33 Europe: Liverpool rout United 4-0 in Pochettino's debut (AP)",
     "34 Africa: Algeria forces kill suspected traffickers (Wires)",
     "35 Asia-Pacific: Dhaka tribunal orders Yamin trial (Wires)",
     "36 Asia-Pacific: Philippines eyes 4m new voters, 2028 (GMA)",
@@ -502,22 +514,22 @@ for pos, item in enumerate(further):
 pen.rectangle([MX, 946, CANVAS[0] - MX, 978], outline=PALETTE["red"], width=2)
 page.write(MX + 8, 952, "DATE CHECK", "sans_b", 10, PALETTE["red"])
 check = ("Left out as other days' news: the 186-drone night over Kyiv (Sat–Sun) · the Sparta II strike (Sat) · "
-         "BepiColombo reaches Mercury (Sat) · “El Chapo Isidro” arrested (Fri) · Sunday's COP31 draft itself "
-         "(Monday's story is that it fell). Not yet happened at press time (07:30 UTC): the Brussels march "
-         "(09:00) and ATC back on at 20:00 — scheduled, not reported.")
+         "BepiColombo reaches Mercury (Sat) · “El Chapo Isidro” arrested (Fri). Sunday's results, reported "
+         "Monday: Liverpool 4-0, Alcaraz's ATP crown, Hong Kong's vote; COP31 collapsed at Sunday's plenary — "
+         "Monday's story is the fallout.")
 page.para(MX + 92, 952, check, "sans", 9.5, (40, 40, 40), IW - 104, 12, 2)
 
 # ---------- footer ----------
 page.write(MX, 984,
-           "Sources: Reuters, AP, AFP, Al Jazeera, RTBF, Xinhua, SCMP, The Times, El País, GMA, Haaretz, KCNA, ATP — and the wires named with each story.",
+           "Sources: Reuters, AP, AFP, CNN, Al Jazeera, RTBF, Belga, Xinhua, SCMP, The Times, El País, GMA, Haaretz, KCNA, ATP, Investopedia, USA Today — and the wires named with each story.",
            "sans", 8.5, PALETTE["grey"])
 page.write(MX, 996,
-           "PRESS TIME 07:30 UTC · CERTAINTY — CONFIRMED = two or more wires · REPORTED = carried by the day's wires · CLAIM = one side's account · FORECAST = still to happen",
+           "PRESS TIME 23:30 UTC · CERTAINTY — CONFIRMED = two or more wires · REPORTED = carried by the day's wires · CLAIM = one side's account · FORECAST = still to happen",
            "sans_b", 8.5, PALETTE["grey"])
 pen.rectangle([0, 1010, CANVAS[0], CANVAS[1]], fill=PALETTE["navy"])
 page.write(MX, 1014, "THE WORLD IN ONE DAY", "sans_b", 10, (255, 255, 255))
 tail = "MONDAY 23 NOVEMBER 2026 · ONE PAGE"
 page.write(CANVAS[0] - MX - page.width(tail, "sans_b", 10), 1014, tail, "sans_b", 10, (255, 255, 255))
 
-page.img.save("/home/hatch/workspace/makefun-news-1123/build/entry.png")
+page.img.save("/home/hatch/workspace/makefun-news-1123/build-v2/entry.png")
 print("saved entry.png")
